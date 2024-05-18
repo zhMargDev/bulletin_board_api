@@ -52,20 +52,21 @@ async def get_image(img: str, folder: str, request: Request):
     
     return FileResponse(image_path)
 
-""" Регистрация """
+
+""" Пользователи """
+@app.get('/user')
+async def get_user(db: Session = Depends(get_db), request: Request = None):
+    return await users.get_(request, db)
+
+    """ Регистрация """
 @app.post('/register')
 async def registre_user(request: Request, db: Session = Depends(get_db)):
     return await user.register_(request, db)
 
-""" Аторизация """
+    """ Аторизация """
 @app.post('/login')
 async def login_user(request: Request, db: Session = Depends(get_db)):
     return await user.login_(request, db)
-
-""" Аккаунты пользователей """
-@app.get('/user')
-async def get_user(db: Session = Depends(get_db), request: Request = None):
-    return await users.get_(request, db)
 
     """ Изменение данных пользователя """
 @app.put('/user')
@@ -80,7 +81,7 @@ async def delete_user(db: Session = Depends(get_db), request: Request = None):
     return await users.delete_(response, db)
 
 
-""" Проверка пользователя на факт авторизоанности """
+    """ Проверка пользователя на факт авторизоанности """
 @app.post('/user_authorization_check')
 async def user_authorization_check(request: Request, db: Session = Depends(get_db)):
     return await user.authorization_check_(request, db)
@@ -145,4 +146,13 @@ async def get_regions(db: Session = Depends(get_db), request: Request = None):
     """ Добавление ругиона """
     """ Изменение ругиона """
     """ Удаление ругиона """
+
+
+    """ Магазины """
+    """ Получение данных магазинов """
+    """ Регистрация магазина """
+    """ Проверка на авторизованность в магазин """
+    """ Аторизация в магазин """
+    """ Изменение данных магазина """
+    """ Удаление данных магазина """
     
