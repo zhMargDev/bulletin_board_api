@@ -1,38 +1,31 @@
 import models.config as conf
+import methods.users as users
+import methods.ads as ads
+import methods.categories as categories
+import methods.regions as regions
 
+from pathlib import Path
+from typing import List
 from models.models import *
-
-from datetime import datetime
-
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request, UploadFile, File, Form
 from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
-from pathlib import Path
-
-
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, and_
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine
+#from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-from passlib.context import CryptContext
-
 
 # Создаем экземпляр FastAPI
 app = FastAPI()
-
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
-
-# Фиксированная соль
-fixed_salt = "2b12mIwJnkR8ltHk6HcdVL"
 
 # Создаем соединение с базой данных
 SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{conf.USERNAME}:{conf.PASSWORD}@{conf.IP_ADDRESS}:{conf.PORT}/{conf.DB_NAME}"
@@ -40,17 +33,6 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # Создаем сессию для работы с базой данных
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Создаем объект для хеширования паролей
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# Функция для создания хеша пароля
-def get_password_hash(password: str):
-    return pwd_context.hash(password, salt=fixed_salt)
-
-# Функция для проверки пароля
-def verify_password(plain_password: str, hashed_password: str):
-    return pwd_context.verify(plain_password, hashed_password)
 
 # Функция для получения сессии базы данных
 def get_db():
@@ -70,111 +52,46 @@ async def get_image(img: str, folder: str, request: Request):
     
     return FileResponse(image_path)
 
-# Регистрация
+""" Регистрация """
 @app.post('/register')
 async def registre_user(request: Request, db: Session = Depends(get_db)):
-    data = await request.json()
+    return await user.register_(request, db)
 
-    user = db.query(User).filter(User.mail == data.get('mail')).all()
-
-    if user:
-        return JSONResponse(status_code=401, content={"Error": "Такая электронная почта уже зарегестрирована."})
-
-    # Хешируем пароль
-    hashed_password = get_password_hash(data.get('password'))
-
-    new_user = User(
-        mail=data.get('mail'),
-        name=data.get('name'),
-        surname=data.get('surname'),
-        password=hashed_password,
-        last_active=str(datetime.now()),
-        created=str(datetime.now())
-    )
-
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-
-    return new_user
-
-# Авторизация
+""" Аторизация """
 @app.post('/login')
 async def login_user(request: Request, db: Session = Depends(get_db)):
-    data = await request.json()
+    return await user.login_(request, db)
 
-    hashed_password = get_password_hash(data.get('password'))
-
-    user = db.query(User).filter(and_(User.password == hashed_password, User.mail == data.get('mail'))).all()
-    
-    if len(user) == 0:
-        return JSONResponse(status_code=401, content={"Error": "Пользователь не найден."})
-    else:
-        return user[0]
-
+""" Проверка пользователя на факт авторизоанности """
 @app.post('/user_authorization_check')
 async def user_authorization_check(request: Request, db: Session = Depends(get_db)):
-    data = await request.json()
+    return await user.authorization_check_(request, db)
 
-    user = db.query(User).filter(and_(User.id == data.get('id'), User.password == data.get('key'), User.mail == data.get('mail'))).all()
-
-    if len(user) == 0:
-        return JSONResponse(status_code=401, content={"Error": "Пользователь не найден."})
-    else:
-        return {'data': True}
-
+""" Категории """
 @app.get("/categories")
 async def get_categories( db: Session = Depends(get_db), request: Request = None):
-    if request.query_params.get("url"):
-        url = request.query_params.get("url")
-        categories = db.query(Categories).filter(Categories.url == url).one()
-        
-        sub_url = request.query_params.get("sub_url")
-
-        if sub_url == 'all' or not sub_url:
-            sub_categories = db.query(SubCategories).filter(SubCategories.p_category_url == url).all()
-        else:
-            sub_categories = db.query(SubCategories).filter(SubCategories.url == sub_url).one()
-        
-    else:
-        categories = db.query(Categories).all()
-        sub_categories = False
-
-    sub_url = request.query_params.get("sub_url")
-    if not sub_url:
-        sub_categories = db.query(SubCategories).all()
-
-
-    if not categories:
-        return JSONResponse(status_code=404, content={"Error": "Категории не найдены."})
-    else:
-        return {'categories': categories, 'sub_categories': sub_categories}
-
+    return await categories.get_(request, db)
+    
+""" Объявления """
 @app.get('/ads')
 async def get_ads(db: Session = Depends(get_db), request: Request = None):
-    id = request.query_params.get("id")
+    return await ads.get_(request, db)
 
-    if not id:
-        return {'data':db.query(Ads).all()}
-    else:
-        ads = db.query(Ads.id == id).one()
+    """ Добавление нового объявления """
+@app.post('/ads')
+async def upload_files(file: UploadFile = File(...), title: str = Form(...), price: str = Form(...), 
+currency: str = Form(...), description: str = Form(...), region: str = Form(...), owner_id: int = Form(...), 
+owenr_type: str = Form(...), category_url: str = Form(...), subcategory_url: str = Form(...),db: Session = Depends(get_db)):
+    return await ads.post_(file, title, price, currency, description, region, owner_id, category_url, subcategory_url, db)
+    
 
-        if not ads:
-            return JSONResponse(status_code=404, content={"Error": "Объявление по указанному ID адресу не найден."})
-        else:
-            return {'ads': ads}
-
+""" Регионы """
 @app.get('/regions')
 async def get_regions(db: Session = Depends(get_db), request: Request = None):
-    url = request.query_params.get('url')
+    return await regions.get_(request, db)
 
-    if not url:
-        return {'regions ':db.query(Regions).all()}
-    else:
-        regions = db.query(Regions.url == url).one()
-
-        if not regions:
-            return JSONResponse(status_code=404, content={"Error": "Объявление по указанному URL нету региона."})
-        else:
-            return {'regions': regions}
-
+""" Аккаунты пользователей """
+@app.get('/user')
+async def get_user(db: Session = Depends(get_db), request: Request = None):
+    return await users.get_(request, db)
+    

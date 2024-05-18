@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Boolean, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 
@@ -29,6 +29,7 @@ class Ads(Base):
     __tablename__ = 'ads'
 
     id = Column(Integer, primary_key=True)
+    activated = Column(Boolean, default=False)
     title = Column(String(100), nullable=False)
     price = Column(String(100), nullable=False)
     currency = Column(String(100), nullable=False)
@@ -36,9 +37,19 @@ class Ads(Base):
     picure_url = Column(String(200), nullable=False)
     region = Column(String(100), nullable=False)
     owner_id = Column(Integer, nullable=False)
+    owner_type = Column(String(100), nullable=False)
     category_url = Column(String(100), nullable=False)
     subcategory_url = Column(String(100), nullable=False)
     views = Column(Integer, nullable=False)
+    created = Column(String(100), nullable=False)
+
+class FavoriteAd(Base):
+    __tablename__ = 'favorites_ads'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False)
+    user_type = Column(String(100), nullable=False)
+    ad_id = Column(Integer, nullable=False)
     created = Column(String(100), nullable=False)
 
 class Regions(Base):
@@ -61,6 +72,21 @@ class User(Base):
     age = Column(Integer, nullable=True)
     phone = Column(String(100), nullable=True)
     rating = Column(String(100), nullable=True)
+    last_active = Column(String(100), nullable=False)
+    about = Column(String(1000), nullable=True)
+    created = Column(String(100), nullable=False)
+
+class Shop(Base):
+    __tablename__ = 'shops'
+
+    id = Column(Integer, primary_key=True)
+    mail = Column(String(100), nullable=False)
+    password = Column(String(300), nullable=False)
+    name = Column(String(100), nullable=False)
+    phone = Column(String(100), nullable=True)
+    rating = Column(String(100), nullable=True)
+    region = Column(String(100), nullable=True)
+    web_site = Column(String(100), nullable=True)
     last_active = Column(String(100), nullable=False)
     about = Column(String(1000), nullable=True)
     created = Column(String(100), nullable=False)

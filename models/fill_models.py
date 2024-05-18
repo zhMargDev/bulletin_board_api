@@ -3,7 +3,7 @@ import models.config as conf
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models.models import Categories, SubCategories, Ads, Regions, Base
+from models.models import *
 
 
 
@@ -228,9 +228,10 @@ def fill_ads():
             'price': '35000/м',
             'currency': 'Rub',
             'description': 'fwqfgqwgf qbhiu qg w biqwbuq gwgbq wqbiguw',
-            'picure_url': f'{conf.HOST_URL}/images/ads/fj1.png',
+            'picure_url': f'/images/ads/fj1.png',
             'region': 'Россия, Хабаровск',
             'owner_id': 1,
+            'owner_type': 'user',
             'category_url': 'housing',
             'subcategory_url': 'none',
             'views': 0,
@@ -241,9 +242,10 @@ def fill_ads():
             'price': '35000',
             'currency': 'Rub',
             'description': 'fwqfgqwgf qbhiu qg w biqwbuq gwgbq wqbiguw',
-            'picure_url': f'{conf.HOST_URL}/images/ads/fj2.png',
+            'picure_url': f'/images/ads/fj2.png',
             'region': 'Россия, Хабаровск',
             'owner_id': 1,
+            'owner_type': 'user',
             'category_url': 'housing',
             'subcategory_url': 'none',
             'views': 0,
@@ -254,9 +256,10 @@ def fill_ads():
             'price': '35000/м',
             'currency': 'Rub',
             'description': 'fwqfgqwgf qbhiu qg w biqwbuq gwgbq wqbiguw',
-            'picure_url': f'{conf.HOST_URL}/images/ads/fj4.png',
+            'picure_url': f'/images/ads/fj4.png',
             'region': 'Россия, Хабаровск',
             'owner_id': 1,
+            'owner_type': 'user',
             'category_url': 'housing',
             'subcategory_url': 'none',
             'views': 0,
@@ -267,9 +270,10 @@ def fill_ads():
             'price': '50000',
             'currency': 'Rub',
             'description': 'fwqfgqwgf qbhiu qg w biqwbuq gwgbq wqbiguw',
-            'picure_url': f'{conf.HOST_URL}/images/ads/fj5.png',
+            'picure_url': f'/images/ads/fj5.png',
             'region': 'Россия, Хабаровск',
             'owner_id': 1,
+            'owner_type': 'user',
             'category_url': 'electronics',
             'subcategory_url': 'none',
             'views': 0,
@@ -280,9 +284,10 @@ def fill_ads():
             'price': '180000',
             'currency': 'Rub',
             'description': 'fwqfgqwgf qbhiu qg w biqwbuq gwgbq wqbiguw',
-            'picure_url': f'{conf.HOST_URL}/images/ads/fj3.png',
+            'picure_url': f'/images/ads/fj3.png',
             'region': 'Россия, Хабаровск',
             'owner_id': 1,
+            'owner_type': 'user',
             'category_url': 'electronics',
             'subcategory_url': 'none',
             'views': 0,
@@ -366,6 +371,45 @@ def fill_regions():
     for region in regions:
         region_ = Regions(**region)
         db.add(region_)
+
+    # Сохраняем изменения в базе данных
+    db.commit()
+
+    # Закрываем сессию базы данных
+    db.close()
+
+def fill_favorites_ads():
+    SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{conf.USERNAME}:{conf.PASSWORD}@{conf.IP_ADDRESS}:{conf.PORT}/{conf.DB_NAME}"
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    # Создаем сессию базы данных
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    db = SessionLocal()
+    # Данные категорий
+    favorites = [
+        {
+            'user_id': 2,
+            'user_type': 'user',
+            'ad_id': 0,
+            'created': str(datetime.now())
+        },
+        {
+            'user_id': 2,
+            'user_type': 'user',
+            'ad_id': 2,
+            'created': str(datetime.now())
+        },
+        {
+            'user_id': 1,
+            'user_type': 'user',
+            'ad_id': 1,
+            'created': str(datetime.now())
+        }
+    ]
+
+    # Добавляем данные в базу данных
+    for favorite in favorites:
+        favorite_ = FavoriteAd(**favorite)
+        db.add(favorite_)
 
     # Сохраняем изменения в базе данных
     db.commit()

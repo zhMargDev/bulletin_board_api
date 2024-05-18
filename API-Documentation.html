@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <hr>
+    <h1>КАТЕГОРИИ</h1>
+    <hr>
+    <h3>Получение категорий:</h3>
+    <ul>
+        <li>Все категории - "domen"/categories</li>
+        <li>Категория по url - "domen"/categories?url=</li>
+        <li>Категория и его под категории по url - "domen"/categories?url=...?sub_url=
+            <ul>
+                <li>sub_url можно поставить all или оставить пустым, чтобы получить все подкатегории выбранной категории</li>
+            </ul>
+        </li>
+        <li>Статусы:
+            <ul>
+                <li>200: Отправка объявлений</li>
+                <li>401: Объявлений не найдено</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+    <h1>ОБЪЯВЛЕНИЯ</h1>
+    <hr>
+
+    <h3>Получние объявлений</h3>
+    <ul>
+        <li>Все Объявления = "domain"/ads</li>
+        <li>Объявление по id = "domain"/ads?id=</li>
+        <li>Объявление по категориям = "domain"/ads?category=&sub_category=</li>
+        <li>Объявление пользователя = "domain"/ads?owner_id=&owner_type=</li>
+        <li>Избранные объявления пользователя = "domain"/ads?user_id=&user_type=</li>
+        <ul>
+            <li>category может быть пустым, тогда отправяться все Объявления</li>
+            <li>sub_category может быть пустым, тогда отправится все Объявления, которые совподает с category</li>
+            <li>Если не указан category, то sub_category будет пропущен</li>
+        </ul>
+        <li>Статусы:
+            <ul>
+                <li>200: Отправка объявлений</li>
+                <li>401: Объявлений не найдено</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+
+    <h3>Создание нового объявления</h3>
+    <ul>
+        <li>Добавление объявления
+            <ul>
+                <li>Тип запроса POST</li>
+                <li>URL: "domain"/ads</li>
+            </ul>
+        </li>
+        <li>Объязательные параметры
+            <ul>
+                <li>Отправка FormData:
+                    <ul>
+                        <li>File картинки</li>
+                        <li>title: string</li>
+                        <li>price: string</li>
+                        <li>currency: string</li>
+                        <li>description: string</li>
+                        <li>region: string</li>
+                        <li>owner_id: integer</li>
+                        <li>owner_type: string (user или shop)</li>
+                        <li>category_url: string</li>
+                        <li>subcategory_url: string</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Статусы:
+            <ul>
+                <li>Code 422 неправельные названия отправляемых данных</li>
+                <li>Code 404 ошибка при отправке (разные ошибки могут быть)</li>
+                <li>Code 200 объявление создана назад получает все данные</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+    <h1>ПОЛЬЗОВАТЕЛИ</h1>
+    <hr>
+
+
+    <h3>Получение данных пользователей</h3>
+    <ul>
+        <li>Все пользователи - "domain"/user</li>
+        <li>Пользователь по id - "domain"/user?id=
+            <ul>
+                <li>Если не указан id, то возвращает всех пользователей</li>
+            </ul>
+        </li>
+        <li>Статусы:
+            <ul>
+                <li>200: Отправка данных пользователя, пароль не отправляется!</li>
+                <li>401: Пользователь не был найден</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+
+    <h3>Регистрация пользователя</h3>
+    <ul>
+        <li>URL POST запрос на адрес "domain"/register</li>
+        <li>Объязательные данные
+            <ul>
+                <li>name: String</li>
+                <li>surname: String</li>
+                <li>mail: String</li>
+                <li>password: String</li>
+            </ul>
+        </li>
+        <li>Статусы
+            <ul>
+                <li>404 ошибка в отправке</li>
+                <li>401 неправельные данные</li>
+                <li>200 пользователь создан, получение его данных</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+
+    <h3>Авториация пользователя</h3>
+    <ul>
+        <li>URL POST запрос на адрес "domain"/login</li>
+        <li>Объязательные данные
+            <ul>
+                <li>mail: String</li>
+                <li>password: String</li>
+            </ul>
+        </li>
+        <li>Статусы
+            <ul>
+                <li>404 ошибка в отправке</li>
+                <li>401 неправельные данные</li>
+                <li>200 пользователь найден, получение его данных</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+
+    <h3>Проверка пользователя на авторизованность</h3>
+    <ul>
+        <li>URL POST запрос на адрес "domain"/user_authorization_check</li>
+        <li>Объязательные данные
+            <ul>
+                <li>id: Integer</li>
+                <li>mail: String</li>
+                <li>key (или же пароль): String</li>
+            </ul>
+        </li>
+        <li>Статусы
+            <ul>
+                <li>404 ошибка в отправке</li>
+                <li>401 неправельные данные</li>
+                <li>200 пользователь найден, получение true</li>
+            </ul>
+        </li>
+    </ul>
+    
+    <hr>
+    <h1>РЕГИОНЫ</h1>
+    <hr>
+    <h3>Получение всех регионов</h3>
+    <ul>
+        <li>URL запрос на адрес "domain"/regions?url=
+            <ul>
+                <li>Если не отправлять данные то будет получены все регионы</li>
+                <li>Можно указать url адрес региона и получить регион который совпадает по этому url</li>
+            </ul>
+        </li>
+        <li>Статусы
+            <ul>
+                <li>404 регионов не было найдено</li>
+                <li>200 регионы были найден и отправлены</li>
+            </ul>
+        </li>
+    </ul>
+</body>
+</html>
