@@ -70,8 +70,8 @@ async def get_user(db: Session = Depends(get_db), request: Request = None):
     """ Изменение данных пользователя """
 @app.put('/user')
 async def change_user(id: int = Form(...), db: Session = Depends(get_db), file: UploadFile = File(None), mail: str = Form(None), password: str = Form(None),
-name: str = Form(None), surname: str = Form(None), sex: str = From(None), age: int = Form(None), phone: str = Form(None), rating: str = Form(None), 
-last_active: str = Form(None), about: str = From(None)):
+name: str = Form(None), surname: str = Form(None), sex: str = Form(None), age: int = Form(None), phone: str = Form(None), rating: str = Form(None), 
+last_active: str = Form(None), about: str = Form(None)):
     return await users.put_(id=id, db=db, file=file, mail=mail, password=password, name=name, surname=surname, sex=sex, age=age, phone=phone, rating=rating, last_active=last_active, about=about)
     
     """ Удаление пользователя """
@@ -126,7 +126,7 @@ async def delete_ad(db: Session = Depends(get_db), request: Request = None):
     return await ads.delete_(db, request)
 
     """ Добавление в избранные """
-@app.push('/ads/add_to_favorite')
+@app.post('/ads/add_to_favorite')
 async def add_to_favorites(db: Session = Depends(get_db), request: Request = None):
     return await ads.add_to_favorites(db, request)
 
