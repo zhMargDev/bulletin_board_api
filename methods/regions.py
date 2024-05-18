@@ -1,5 +1,7 @@
 from models.models import Regions, Base
 from sqlalchemy.orm import sessionmaker, load_only
+from fastapi.responses import JSONResponse
+
 
 async def get_(request, db):
     url = request.query_params.get('url')

@@ -1,6 +1,7 @@
 from models.models import Categories, SubCategories, Base
-
 from sqlalchemy.orm import sessionmaker, load_only
+from fastapi.responses import JSONResponse
+
 
 async def get_(request, db):
     if request.query_params.get("url"):

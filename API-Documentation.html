@@ -37,6 +37,7 @@
         <li>Объявление по категориям = "domain"/ads?category=&sub_category=</li>
         <li>Объявление пользователя = "domain"/ads?owner_id=&owner_type=</li>
         <li>Избранные объявления пользователя = "domain"/ads?user_id=&user_type=</li>
+        <li>Вы можете так же и указать лимит для получения конкретного количество объявлений = "domain"/ads?limit=</li>
         <ul>
             <li>category может быть пустым, тогда отправяться все Объявления</li>
             <li>sub_category может быть пустым, тогда отправится все Объявления, которые совподает с category</li>
@@ -86,15 +87,184 @@
             </ul>
         </li>
     </ul>
+    
+    <hr>
+
+    <h3>Изменение объявления</h3>
+    <ul>
+        <li>Изменени объявления
+            <ul>
+                <li>Тип запроса PUT</li>
+                <li>URL: "domain"/ads</li>
+            </ul>
+        </li>
+        <li>Объязательный параметр только id тип Integer
+            <ul>
+                <li>Отправка FormData:
+                    <ul>
+                        <li>File картинки (не объязательно)</li>
+                        <li>title: string  (не объязательно)</li>
+                        <li>price: string  (не объязательно)</li>
+                        <li>currency: string  (не объязательно)</li>
+                        <li>description: string  (не объязательно)</li>
+                        <li>region: string  (не объязательно)</li>
+                        <li>owner_id: integer  (не объязательно)</li>
+                        <li>owner_type: string (user или shop)  (не объязательно)</li>
+                        <li>category_url: string  (не объязательно)</li>
+                        <li>subcategory_url: string  (не объязательно)</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Статусы:
+            <ul>
+                <li>Code 422 неправельные названия отправляемых данных или не указан id</li>
+                <li>Code 404 ошибка при отправке (разные ошибки могут быть)</li>
+                <li>Code 200 объявление создана назад получает все данные</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+    
+    <h3>Активация или деактивация объявления</h3>
+    <ul>
+        <li>
+            <ul>
+                <li>Тип запроса PUT</li>
+                <li>URL: "domain"/ads/change_status</li>
+            </ul>
+        </li>
+        <li>Объязательные параметр
+            <ul>
+                <li>
+                    <ul>
+                        <li>id тип integer</li>
+                        <li>activated тип boolean значения true для активации, false для деактивации</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Статусы:
+            <ul>
+                <li>Code 422 неправельные названия отправляемых данных или не указан id</li>
+                <li>Code 404 ошибка при отправке (разные ошибки могут быть)</li>
+                <li>Code 200 статус изменен, возвращает true</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+    
+    <h3>Удаление объявления</h3>
+    <ul>
+        <li>
+            <ul>
+                <li>Тип запроса DELETE</li>
+                <li>URL: "domain"/ads</li>
+            </ul>
+        </li>
+        <li>Объязательные параметр
+            <ul>
+                <li>
+                    <ul>
+                        <li>id тип integer</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Статусы:
+            <ul>
+                <li>Code 422 неправельные названия отправляемых данных или не указан id</li>
+                <li>Code 404 ошибка при отправке (разные ошибки могут быть)</li>
+                <li>Code 200 статус изменен, возвращает true</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+    
+    <h3>Удаление из избранных</h3>
+    <ul>
+        <li>
+            <ul>
+                <li>Тип запроса DELETE</li>
+                <li>URL: "domain"/ads/favorite</li>
+            </ul>
+        </li>
+        <li>Объязательные параметр
+            <ul>
+                <li>
+                    <ul>
+                        <li>id избранного объявления тип integer</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Статусы:
+            <ul>
+                <li>Code 422 неправельные названия отправляемых данных или не указан id</li>
+                <li>Code 404 ошибка при отправке (разные ошибки могут быть)</li>
+                <li>Code 200 статус изменен, возвращает true</li>
+            </ul>
+        </li>
+    </ul>
 
     <hr>
     <h1>ПОЛЬЗОВАТЕЛИ</h1>
+    <hr>
+
+    <h3>Изменение данных пользователя</h3>
+    <ul>
+        <li>Метод PUT</li>
+        <li>URL "domain"/user</li>
+        <li>Объязательные данные: id пользователя</li>
+        <li>Необъязательные данные
+            <ul>
+                <li>file: formdata</li>
+                <li>mail: str</li>
+                <li>password: str</li>
+                <li>name: str</li>
+                <li>surname: str</li>
+                <li>sex: str</li>
+                <li>age: int</li>
+                <li>phone: str</li>
+                <li>rating: str</li>
+                <li>last_active: str</li>
+                <li>about: str</li>
+            </ul>
+        </li>
+        <li>Статусы
+            <ul>
+                <li>Code 422: неправельные отправленные данные</li>
+                <li>Code 404: какие то данные не были найдены</li>
+                <li>Code 200: данные изменены, отправка всех данных</li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+
+    <h3>Удаление пользователя</h3>
+    <ul>
+        <li>Метод DELETE</li>
+        <li>URL "domain"/user</li>
+        <li>Объязательные данные: id пользователя</li>
+        <li>Статусы
+            <ul>
+                <li>Code 404: пользователь не был найден</li>
+                <li>Code 200: пользователь удалён</li>
+            </ul>
+        </li>
+    </ul>
+
     <hr>
 
 
     <h3>Получение данных пользователей</h3>
     <ul>
         <li>Все пользователи - "domain"/user</li>
+        <li>Можно указать лимит - "domain"/user?limit=</li>
         <li>Пользователь по id - "domain"/user?id=
             <ul>
                 <li>Если не указан id, то возвращает всех пользователей</li>

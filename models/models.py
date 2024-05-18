@@ -34,7 +34,7 @@ class Ads(Base):
     price = Column(String(100), nullable=False)
     currency = Column(String(100), nullable=False)
     description = Column(String(1000), nullable=False)
-    picure_url = Column(String(200), nullable=False)
+    picture_url = Column(String(200), nullable=False)
     region = Column(String(100), nullable=False)
     owner_id = Column(Integer, nullable=False)
     owner_type = Column(String(100), nullable=False)
@@ -65,6 +65,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     mail = Column(String(100), nullable=False)
+    avatar = Column(String(100), nullable=True)
     password = Column(String(300), nullable=False)
     name = Column(String(100), nullable=True)
     surname = Column(String(100), nullable=True)
@@ -80,6 +81,7 @@ class Shop(Base):
     __tablename__ = 'shops'
 
     id = Column(Integer, primary_key=True)
+    avatar = Column(String(100), nullable=True)
     mail = Column(String(100), nullable=False)
     password = Column(String(300), nullable=False)
     name = Column(String(100), nullable=False)
