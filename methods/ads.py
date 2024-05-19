@@ -71,11 +71,10 @@ async def get_(request, db):
 
 # Добавление нового объявления
 async def post_(file, title, price, currency, description, region, owner_id, category_url, subcategory_url, db):
-    SAVE_DIR = Path("imgs/ads")
-    # Проверяем, что директория для сохранения существует, иначе создаем ее
-    SAVE_DIR.mkdir(parents=True, exist_ok=True)
-
     try:
+        SAVE_DIR = Path("imgs/ads")
+        # Проверяем, что директория для сохранения существует, иначе создаем ее
+        SAVE_DIR.mkdir(parents=True, exist_ok=True)
         # Генерируем уникальное имя файла
         unique_filename = str(uuid.uuid4()) + Path(file.filename).suffix
         # Полный путь для сохранения файла

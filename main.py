@@ -53,7 +53,7 @@ async def get_image(img: str, folder: str, request: Request):
     return FileResponse(image_path)
 
 
-""" Пользователи """
+""" ========== Пользователи ========== """
 @app.get('/user')
 async def get_user(db: Session = Depends(get_db), request: Request = None):
     return await users.get_(request, db)
@@ -80,24 +80,47 @@ last_active: str = Form(None), about: str = Form(None)):
 async def delete_user(db: Session = Depends(get_db), request: Request = None):
     return await users.delete_(response, db)
 
-
     """ Проверка пользователя на факт авторизоанности """
 @app.post('/user_authorization_check')
 async def user_authorization_check(request: Request, db: Session = Depends(get_db)):
     return await user.authorization_check_(request, db)
 
-""" Категории """
+""" ========== Категории ========== """
 @app.get("/categories")
 async def get_categories( db: Session = Depends(get_db), request: Request = None):
     return await categories.get_(request, db)
 
     """ Добавление категории """
+@app.post('/categories')
+async def add_category(db: Session = Depends(get_db), file: UploadFile = File(...), name: str = Form(...), url: str = Form(...), types: str = Form(...)):
+    return await categories.post_category(db=db, file=file, name=name, url=url, types=types)
+
+    """ Добавление под категории """
+@app.post('/categories/sub')
+async def add_sub_category(db: Session = Depends(get_db), request: Request = None):
+    return await categories.post_sub_category(db=db, request=request)
+
     """ Изменение категории """
+@app.put('/categories')
+async def change_category(db: Session = Depends(get_db), id: int = Form(...), file: UploadFile = File(None), name: str = Form(None), url: str = Form(None), types: str = Form(None)):
+    return await categories.put_category(db=db, id=id, file=file, name=name, url=url, types=types)
+
+    """ Изменение под категории """
+@app.put('/categories/sub')
+async def change_sub_category(db: Session = Depends(get_db), request: Request = None):
+    return await categories.put_sub_category(db=db, request=request)
+
     """ Удаление категории """
+@app.delete('/categories')
+async def delete_category(db: Session = Depends(get_db), request: Request = None):
+    return await categories.delete_category(db=db, request=request)
 
+    """ Удаление под категории """
+@app.delete('/categories/sub')
+async def delete_sub_category(db: Session = Depends(get_db), request: Request = None):
+    return await categories.delete_sub_category(db=db, request=request)
 
-    
-""" Объявления """
+""" ========== Объявления ========== """
 @app.get('/ads')
 async def get_ads(db: Session = Depends(get_db), request: Request = None):
     return await ads.get_(request, db)
@@ -136,17 +159,26 @@ async def add_to_favorites(db: Session = Depends(get_db), request: Request = Non
 async def delete_favorite_ad(db: Session = Depends(get_db), request: Request = None):
     return await ads.remove_favorite(db, request)
 
-
-
-""" Регионы """
+""" ========== Регионы ========== """
 @app.get('/regions')
 async def get_regions(db: Session = Depends(get_db), request: Request = None):
     return await regions.get_(request, db)
 
     """ Добавление ругиона """
-    """ Изменение ругиона """
-    """ Удаление ругиона """
 
+@app.post('/regions')
+async def add_region(db: Session = Depends(get_db), request: Request = None):
+    return await regions.post_(request=request, db=db)
+
+    """ Изменение ругиона """
+@app.put('/regions')
+async def change_region(db: Session = Depends(get_db), request: Request = None):
+    return await regions.put_(request=request, db=db)
+
+    """ Удаление ругиона """
+@app.delete('/regions')
+async def delete_region(db: Session = Depends(get_db), request: Request = None):
+    return await regions.delete_(request=request, db=db)
 
     """ Магазины """
     """ Получение данных магазинов """
